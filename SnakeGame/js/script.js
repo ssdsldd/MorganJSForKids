@@ -15,6 +15,35 @@ function Block(col, row){
     this.row = row;
 }
 
+function Snake(){
+    this.direction = "right";
+    this.nextDirection = "right";
+    this.segments = [new Block(7,5), new Block(6,5), new Block(5,5)];
+}
+
+Snake.prototype.drawSnake(){
+    for (let i = 0; i < this.segments.length; i++){
+        this.segment[i].drawSquare("blue");
+    }
+}
+
+Block.prototype.drawSquare(color){
+    let x = this.col * blockCell;
+    let y = this.row * blockCell;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, blockCell, blockCell);
+}
+
+Block.prototype.drawCircle(color){
+    let centerX = this.col * blockCell + blockCell/2;
+    let centerY = this.row * blockCell + blockCell/2;
+    circle(centerX, centerY, blockCell/2, true, color);
+}
+
+Block.prototype.equal(otherBlock){
+    return (this.col === otherBlock.col && this.row === otherBlock.row);
+}
+
 function circle(x, y, r, fillCircle, colorCircle){
     ctx.beginPath();
     ctx.fillStyle = colorCircle;
@@ -47,5 +76,7 @@ function gameOver(){
     ctx.font = "60px Courier";
     ctx.textAlign = "center";
     ctx.fillStyle = "black";
+    ctx.textBaseline = "center";
     ctx.fillText("Game Over", width/2, height/2);
 }
+
