@@ -8,7 +8,16 @@ let score = 0;
 let blockCell = 10;
 let widthInBlock = width/blockCell;
 let heightInBlock = height/blockCell;
+let keyCodes = {
+    37: "left",
+    38: "top",
+    39: "right",
+    40: "down"
+}
 
+document.addEventListener('keydown', function(event){
+    let direction = keyCodes[event.keycode];
+})
 
 function Block(col, row){
     this.col = col;
@@ -21,26 +30,45 @@ function Snake(){
     this.segments = [new Block(7,5), new Block(6,5), new Block(5,5)];
 }
 
-Snake.prototype.drawSnake(){
+Snake.prototype.drawSnake = function(){
     for (let i = 0; i < this.segments.length; i++){
         this.segment[i].drawSquare("blue");
     }
 }
 
-Block.prototype.drawSquare(color){
+Snake.prototype.move = function(){
+    let head = this.segment[0];
+    let newHead;
+
+}
+
+Snake.prototype.setDirection = function(newDirection){
+    if (newDirection === "right" && this.direction === "left"){
+        return;
+    } else if (newDirection === "left" && this.direction === "right"){
+        return;
+    } else if (newDirection === "top" && this.direction === "down"){
+        return;
+    } else if (newDirection === "down" && this.direction === "top"){
+        return;
+    } 
+    this.nextDirection = newDirection;
+}
+
+Block.prototype.drawSquare = function(color){
     let x = this.col * blockCell;
     let y = this.row * blockCell;
     ctx.fillStyle = color;
     ctx.fillRect(x, y, blockCell, blockCell);
 }
 
-Block.prototype.drawCircle(color){
+Block.prototype.drawCircle = function(color){
     let centerX = this.col * blockCell + blockCell/2;
     let centerY = this.row * blockCell + blockCell/2;
     circle(centerX, centerY, blockCell/2, true, color);
 }
 
-Block.prototype.equal(otherBlock){
+Block.prototype.equal = function(otherBlock){
     return (this.col === otherBlock.col && this.row === otherBlock.row);
 }
 
