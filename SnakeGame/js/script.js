@@ -16,7 +16,10 @@ let keyCodes = {
 }
 
 document.addEventListener('keydown', function(event){
-    let direction = keyCodes[event.keycode];
+    let newDirection = keyCodes[event.keycode];
+    if (newDirection !== undefined){
+        Snake.setDirection(newDirection);
+    }
 })
 
 function Block(col, row){
@@ -30,6 +33,20 @@ function Snake(){
     this.segments = [new Block(7,5), new Block(6,5), new Block(5,5)];
 }
 
+function Apple(){
+    this.position = new Block(10,10);
+}
+
+Apple.prototype.move = function(){
+    let randomCol = Math.floor(Math.random()*(widthInBlock-2)+1);
+    let randomRow = Math.floor(Math.random()*(heightInBlock-2)+1);
+    this.position = new Block(randomCol, randomRow);
+}
+
+Apple.prototype.draw = function(color){
+    this.position.drawCircle("Green");
+}
+
 Snake.prototype.drawSnake = function(){
     for (let i = 0; i < this.segments.length; i++){
         this.segment[i].drawSquare("blue");
@@ -37,9 +54,44 @@ Snake.prototype.drawSnake = function(){
 }
 
 Snake.prototype.move = function(){
-    let head = this.segment[0];
+    let head = this.segments[0];
     let newHead;
+    this.direction = this.newDirection; 
+    if (this.direction === "right"){
+        newHead = new Block(head.col + 1, head.row);
+    } else if (this.direction === "left"){
+        newHead = new Block(head.col - 1, head.row);
+    } else if (this.direction === "top"){
+        newHead = new Block(head.col, head.row - 1);
+    } else if (this.direction === "down"){
+        newHead = new Block(head.col, head.row + 1);
+    }
+    if (snake.checkCollision(newHead)){
+        gameOver();
+        return;
+    }
+    this.segments.unshift(newHead);
+    if (newHead.equal(apple.position)){
+        score++;
+        apple.move();
+    } else{
+        this.segments.pop();
+    }
+}
 
+Snake.prototype.checkCollision = function(head){
+    let leftCollision = (head.col === 0);
+    let rightCollision = (head.col === widthInBlock - 1);
+    let topCollision = (head.row === 0);
+    let bottomCollision = (head.row === heightInBlock - 1);
+    let wallCollision = leftCollision || rightCollision || topCollision || bottomCollision;
+    let selfCollision = false;
+    for (let i = 0; i < this.segments.length; i++){
+        if (head.equal(this.segments[i])){
+            selfCollision = true;
+        }
+    }
+    return selfCollision || wallCollision;
 }
 
 Snake.prototype.setDirection = function(newDirection){
@@ -108,3 +160,14 @@ function gameOver(){
     ctx.fillText("Game Over", width/2, height/2);
 }
 
+let snake = new Snake();
+let apple = new Apple();
+
+let intervalID = setInterval(function(){
+    ctx.clearRect(0,0,width,height);
+    drawScore();
+    snake.move();
+    snake.draw();
+    apple.draw();
+    drawBorder();
+},100);
