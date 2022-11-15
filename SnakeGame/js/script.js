@@ -16,9 +16,9 @@ let keyCodes = {
 }
 
 document.addEventListener('keydown', function(event){
-    let newDirection = keyCodes[event.keycode];
+    let newDirection = keyCodes[event.keyCode];
     if (newDirection !== undefined){
-        Snake.setDirection(newDirection);
+        snake.setDirection(newDirection);
     }
 })
 
@@ -47,16 +47,16 @@ Apple.prototype.draw = function(color){
     this.position.drawCircle("Green");
 }
 
-Snake.prototype.drawSnake = function(){
+Snake.prototype.draw = function(){
     for (let i = 0; i < this.segments.length; i++){
-        this.segment[i].drawSquare("blue");
+        this.segments[i].drawSquare("Blue");
     }
 }
 
 Snake.prototype.move = function(){
     let head = this.segments[0];
     let newHead;
-    this.direction = this.newDirection; 
+    this.direction = this.nextDirection; 
     if (this.direction === "right"){
         newHead = new Block(head.col + 1, head.row);
     } else if (this.direction === "left"){
