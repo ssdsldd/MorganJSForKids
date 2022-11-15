@@ -46,10 +46,19 @@ Apple.prototype.move = function(){
 Apple.prototype.draw = function(color){
     this.position.drawCircle("Green");
 }
-
+let flag = 0;
 Snake.prototype.draw = function(){
     for (let i = 0; i < this.segments.length; i++){
-        this.segments[i].drawSquare("Blue");
+        if (flag === 0){
+            this.segments[i].drawSquare("Green");
+            flag = 1;
+        } else if (flag === 1){
+            this.segments[i].drawSquare("Yellow");
+            flag = 2;
+        } else if (flag === 2){
+            this.segments[i].drawSquare("Blue");
+            flag = 0;
+        }
     }
 }
 
@@ -74,6 +83,7 @@ Snake.prototype.move = function(){
     if (newHead.equal(apple.position)){
         score++;
         apple.move();
+        animationTime -= 10;
     } else{
         this.segments.pop();
     }
@@ -152,7 +162,7 @@ function drawScore(){
 }
 
 function gameOver(){
-    clearInterval(intervalID);
+    clearTimeout(a);
     ctx.font = "60px Courier";
     ctx.textAlign = "center";
     ctx.fillStyle = "black";
@@ -162,12 +172,17 @@ function gameOver(){
 
 let snake = new Snake();
 let apple = new Apple();
+let animationTime = 100;
+let a;
 
-let intervalID = setInterval(function(){
+function gameLoop(){
     ctx.clearRect(0,0,width,height);
     drawScore();
     snake.move();
     snake.draw();
     apple.draw();
     drawBorder();
-},100);
+    a = setTimeout(gameLoop, animationTime);
+}
+gameLoop();
+
